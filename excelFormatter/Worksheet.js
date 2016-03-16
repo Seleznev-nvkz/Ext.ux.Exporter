@@ -15,7 +15,6 @@ Ext.define("Ext.ux.exporter.excelFormatter.Worksheet", {
       hasTitle   : true,
       hasHeadings: true,
       stripeRows : true,
-
       title      : "Workbook",
       columns    : store.fields == undefined ? {} : store.fields.items
     });
@@ -139,17 +138,19 @@ Ext.define("Ext.ux.exporter.excelFormatter.Worksheet", {
         cells = [];
     if (this.stripeRows === true) style = index % 2 == 0 ? 'even' : 'odd';
 
+    var iCol = 0;
     Ext.each(this.columns, function(col) {
       var name  = col.name || col.dataIndex;
 
-      if(name) {
+      if(typeof name !== 'undefined') {
+          var type, value
           //if given a renderer via a ColumnModel, use it and ensure data type is set to String
           if (Ext.isFunction(col.renderer)) {
-            var value = col.renderer(record.get(name), null, record),
-                type = "String";
+              value = col.renderer(record.get(name), {column: col}, record, index, iCol++, this.store);
+              type = "String";
           } else {
-            var value = record.get(name),
-                type  = this.typeMappings[col.type || record.fields.get(name).type.type];
+              value = record.get(name),
+              type  = this.typeMappings[col.type || record.fieldsMap[name].type];
           }
 
           cells.push(this.buildCell(value, type, style).render());

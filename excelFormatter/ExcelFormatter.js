@@ -18,6 +18,6 @@ Ext.define("Ext.ux.exporter.excelFormatter.ExcelFormatter", {
       var workbook = new Ext.ux.exporter.excelFormatter.Workbook(config);
       workbook.addWorksheet(store, config || {});
 
-      return workbook.render();
+      return Ext.ux.exporter.Base64.encode(workbook.render());
     }
 });
